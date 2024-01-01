@@ -32,6 +32,7 @@ The complete study report is available [here](https://github.com/kevinchwong/des
 ### 1_pattern_design_query.py
 - Begins with identifying common design pattern names using OpenAI.
 - Uses Pydantic for structured analysis of each pattern.
+- To make sure the text returned is escaped from OpenAI, put "escaped_" as the prefix in the Pydantic class fields. 
 - Mermaid scripts offer visual representation in lieu of direct UML diagram generation.
 - GPT-3.5 is our primary tool, switching to GPT-4 for more complex analyses.
 
@@ -41,13 +42,5 @@ The complete study report is available [here](https://github.com/kevinchwong/des
 ### 3_generate_markdown.py
 - The final step is to compile our findings into well-structured markdown documents.
 
-## Key Findings from Our Results
-Our study reveals that most design patterns are grounded in SOLID principles, using interfaces to break down large code segments into smaller, loosely coupled pieces. This enhances:
-- Maintainability
-- Testability
-- Scalability
-- Adaptability
-
 ## Concluding Thoughts
 Clean Architecture goes beyond traditional design patterns and principles. It is a holistic approach that fosters resilient, adaptable, and sustainable software systems. Embracing this methodology can lead to significant savings in time and resources and lay the groundwork for a scalable, future-proof architecture.
-```
