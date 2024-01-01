@@ -1,6 +1,6 @@
 
-# Mediator Design Pattern
-> Version: dp_20231231_202019
+# Mediator Design Pattern Summary
+> Version: dp_20231231_234226
 
 - [Builder Design Pattern](#builder-design-pattern)
    * [Summary](#summary)
@@ -23,16 +23,20 @@
 ## Summary
 
 ### Essence
-Defines a mediator object that controls communication between objects
+
+- Defines an object that encapsulates how a set of objects interact
+- Promotes loose coupling by keeping objects from referring to each other explicitly
+- Centralizes communication logic
+- Reduces complexity of individual objects
+- Decouples objects and reduces dependencies
 
 ### Real examples
 
-- Chat applications
-- Air traffic control systems
-- Event-driven systems
-- Shopping cart systems
-- Multiplayer games
-- Distributed systems
+- Chat applications, where the mediator acts as a central hub for sending and receiving messages between users
+- Air traffic control systems, where the mediator coordinates communication between aircraft and control towers
+- Event-driven systems, where the mediator handles routing of events between components
+- Online marketplaces, where the mediator facilitates communication between buyers and sellers
+- Multiplayer games, where the mediator manages interactions between players
 
 
 ```mermaid
@@ -48,40 +52,42 @@ classDiagram
   }
 
   class ConcreteMediator {
-    -colleagues: Colleague[]
-    +addColleague(colleague: Colleague): void
+    -colleague1: Colleague
+    -colleague2: Colleague
     +notify(sender: Colleague, event: string): void
   }
 
-  class ConcreteColleagueA {
+  class ConcreteColleague1 {
     +send(event: string): void
     +receive(event: string): void
   }
 
-  class ConcreteColleagueB {
+  class ConcreteColleague2 {
     +send(event: string): void
     +receive(event: string): void
   }
 
-  Mediator o-- Colleague
-  Mediator <|-- ConcreteMediator
-  Colleague <|-- ConcreteColleagueA
-  Colleague <|-- ConcreteColleagueB
+  Mediator --> Colleague
+  ConcreteMediator --> Colleague
+  ConcreteColleague1 --> Colleague
+  ConcreteColleague2 --> Colleague
+  ConcreteMediator --> Mediator
 ```
 
 ## Implementation
 ### How to use it?
 To use the Mediator design pattern, follow these steps:
-1. Define a Mediator interface or base class that declares the communication methods.
-2. Implement the Mediator interface or base class to create a concrete mediator class.
-3. Define a Colleague interface or base class that declares the communication methods used by the objects.
-4. Implement the Colleague interface or base class to create concrete colleague classes.
-5. In the client code, create the mediator object and the colleague objects.
-6. Set the mediator object as the mediator for each colleague object.
-7. Use the colleague objects to communicate with each other indirectly through the mediator.
+1. Create an interface or base class for the mediator.
+2. Create concrete mediator classes that implement the mediator interface.
+3. Create interface or base classes for the colleagues.
+4. Create concrete colleague classes that implement the colleague interface or inherit from the colleague base class.
+5. In the colleague classes, define methods to send and receive messages.
+6. In the mediator classes, implement the logic to handle the communication between colleagues.
+7. Use the mediator to coordinate the communication between colleagues.
 
 ### Python code examples:
 ```python
+
 from abc import ABC, abstractmethod
 
 class Mediator(ABC):
@@ -103,117 +109,118 @@ class Colleague(ABC):
 
 class ConcreteMediator(Mediator):
     def __init__(self):
-        self.colleagues = []
-
-    def add_colleague(self, colleague):
-        self.colleagues.append(colleague)
+        self.colleague1 = ConcreteColleague1(self)
+        self.colleague2 = ConcreteColleague2(self)
 
     def notify(self, sender, event):
-        for colleague in self.colleagues:
-            if colleague != sender:
-                colleague.receive(event)
+        if sender == self.colleague1:
+            self.colleague2.receive(event)
+        elif sender == self.colleague2:
+            self.colleague1.receive(event)
 
-
-class ConcreteColleagueA(Colleague):
+class ConcreteColleague1(Colleague):
     def send(self, event):
         self.mediator.notify(self, event)
 
     def receive(self, event):
-        print('ConcreteColleagueA received:', event)
+        print('ConcreteColleague1 received:', event)
 
 
-class ConcreteColleagueB(Colleague):
+class ConcreteColleague2(Colleague):
     def send(self, event):
         self.mediator.notify(self, event)
 
     def receive(self, event):
-        print('ConcreteColleagueB received:', event)
-
+        print('ConcreteColleague2 received:', event)
 
 mediator = ConcreteMediator()
+mediator.colleague1.send('Hello from ConcreteColleague1')
+mediator.colleague2.send('Hello from ConcreteColleague2')
 
-colleague_a = ConcreteColleagueA(mediator)
-colleague_b = ConcreteColleagueB(mediator)
-
-mediator.add_colleague(colleague_a)
-mediator.add_colleague(colleague_b)
-
-colleague_a.send('Hello from Colleague A')
-# Output: ConcreteColleagueB received: Hello from Colleague A
-
-colleague_b.send('Hello from Colleague B')
-# Output: ConcreteColleagueA received: Hello from Colleague B
 ```
 
-- The Python code example demonstrates the Mediator design pattern by defining a mediator and two colleagues.
-- The colleagues communicate with each other indirectly through the mediator, reducing direct dependencies.
-- The mediator notifies the other colleagues when a colleague sends a message, promoting loose coupling.
-- The code shows how the Mediator design pattern can be used to manage communication between objects.
-- By using the mediator, the code becomes more modular, maintainable, and easier to test.   
+- The Python code example demonstrates the Mediator design pattern by defining a mediator and two colleagues. The colleagues communicate with each other through the mediator, which decouples them and centralizes the communication logic.   
 
 
 ## Analysis
-### Cleaner Code?
+### Maintainability: 
+To what extent is your code characterized by cleanliness and readability?
+#### Cleaner Code?
 
-- Reduces direct dependencies between objects
 - Encapsulates communication logic in a separate mediator object
-- Allows for easier extensibility and modification of communication behavior
+- Reduces complexity of individual objects by removing the need for them to know about each other
+- Centralizes communication logic in one place
 
-### Readable Code?
+#### Readable Code?
 
-- Centralizes communication logic in a mediator object
-- Abstracts interactions between objects
-- Reduces complexity of individual objects
+- Provides a clear and centralized way to handle communication between objects
+- Makes it easier to understand the flow of communication and interactions
+- Reduces the need for objects to have knowledge of each other, making the code more modular and easier to follow
 
-### Replaceable code?
 
-- Promotes loose coupling between objects
-- Objects only need to know about the mediator interface
+### Testability: 
+Can your code be methodically and comprehensively tested?
 
-### Testable code?
 
-- Promotes loose coupling between objects
-- Objects can be tested in isolation
-- Communication logic can be tested separately in the mediator
+### Adaptability: 
+How readily can your code be substituted or modified?
+#### Replaceable code?
 
-### Advantages?
+- Decouples objects from each other
+- Allows for easier modification or replacement of individual objects without affecting the rest of the system
+- Provides a flexible and extensible architecture
 
-- Promotes loose coupling
-- Simplifies communication
-- Improves code readability
-- Facilitates unit testing
 
-### Disadvantages?
+### Scalability:
+Are your architectural components characterized by loose coupling?
 
-- Adds complexity to system architecture
-- Potential single point of failure
-- Difficulty in defining a generic mediator interface
+
+### Tradeoffs:
+#### Advantages?
+
+- Decouples objects and reduces dependencies
+- Centralizes communication logic
+- Improves code readability and modularity
+- Supports replaceability and extensibility
+- Enhances code testability and scalability
+- Solves the problem of complex communication logic and tight coupling
+
+#### Disadvantages?
+
+- Can introduce additional complexity and overhead
+- Requires creation of additional mediator and colleague classes
+- May not be suitable for simple systems with few objects and straightforward communication
+- Avoids tightly coupling objects
+- Avoids duplicating communication logic
+- Avoids complex and tangled communication between objects
 
 
 ## Remarks
 ### Concerns and Tips?
 
-- Concerns: Potential complexity of mediator object, Designing mediator interface
-- Programming tips: Identify objects that need to communicate, Define clear interfaces, Test communication using mediator
-- Trickys: Designing mediator interface, Avoiding performance bottlenecks
-- Studies: 'Design Patterns: Elements of Reusable Object-Oriented Software', 'Head First Design Patterns', 'Design Patterns in Python'
+- The Mediator design pattern can introduce additional complexity and overhead
+- Requires creation of additional mediator and colleague classes
+- May not be suitable for simple systems with few objects and straightforward communication
+- Consider trade-offs between loose coupling and additional classes and complexity
+- Ensure responsibilities of mediator and colleagues are well-defined and properly separated
+- Recommended resources: 'Design Patterns: Elements of Reusable Object-Oriented Software' by Erich Gamma et al., 'Head First Design Patterns' by Eric Freeman and Elisabeth Robson, 'Design Patterns in Python' by Brandon Rhodes and Tres Seaver
 
 
 ### Execrises
 
 - Q: What is the purpose of the Mediator design pattern?
 
-  - A: The purpose of the Mediator design pattern is to define an object that encapsulates how a set of objects interact and promotes loose coupling between them.
-- Q: How does the Mediator design pattern help in making code clean?
+  - A: The purpose of the Mediator design pattern is to define an object that encapsulates how a set of objects interact and promotes loose coupling by keeping objects from referring to each other explicitly.
+- Q: How does the Mediator design pattern improve code maintainability?
 
-  - A: The Mediator design pattern promotes clean code by reducing direct dependencies between objects and encapsulating the communication logic in a separate mediator object.
-- Q: What are some advantages of using the Mediator design pattern?
+  - A: The Mediator design pattern improves code maintainability by centralizing the communication logic in a separate mediator object, making it easier to understand, modify, and debug.
+- Q: What are the advantages of using the Mediator design pattern?
 
-  - A: Some advantages of using the Mediator design pattern include promoting loose coupling, simplifying communication, improving code readability, and facilitating unit testing.
-- Q: What are some real-world examples of the Mediator design pattern?
+  - A: The advantages of using the Mediator design pattern include decoupling objects and reducing dependencies, centralizing communication logic, improving code readability and modularity, supporting replaceability and extensibility, and enhancing code testability and scalability.
+- Q: When should you use the Mediator design pattern?
 
-  - A: Some real-world examples include chat applications, air traffic control systems, and event-driven systems.
-- Q: What are some concerns with the Mediator design pattern?
+  - A: You should use the Mediator design pattern when you have a system with complex communication logic, multiple objects, and the need for decoupling and centralization.
+- Q: What are the potential drawbacks of using the Mediator design pattern?
 
-  - A: Some concerns with the Mediator design pattern include the potential for the mediator object to become too complex and the need to carefully design the mediator interface.
+  - A: The potential drawbacks of using the Mediator design pattern include additional complexity and overhead, the creation of additional mediator and colleague classes, and potential unsuitability for simple systems with few objects and straightforward communication.
 

@@ -1,6 +1,6 @@
 
-# Flyweight Design Pattern
-> Version: dp_20231231_202019
+# Flyweight Design Pattern Summary
+> Version: dp_20231231_234226
 
 - [Builder Design Pattern](#builder-design-pattern)
    * [Summary](#summary)
@@ -23,151 +23,93 @@
 ## Summary
 
 ### Essence
-The Flyweight design pattern aims to minimize memory usage by sharing as much data as possible between multiple objects. It separates the intrinsic and extrinsic state of objects, where the intrinsic state is shared among objects and the extrinsic state is unique to each object. This pattern improves code organization, reduces complexity, and promotes code reusability.
+The essence of the Flyweight pattern is to use sharing to support large numbers of fine-grained objects efficiently. It helps minimize memory use by sharing as much data as possible with similar objects.
 
 ### Real examples
 
-- Text editors representing characters in a document
-- Web browsers caching images and fonts
-- Database connection pools reusing connections
-- Game engines representing game objects with a large number of instances
+- Text editing software where each character is a flyweight object
+- Game programming where game objects like trees and monsters can be flyweights
 
 
 ```mermaid
 classDiagram
-  class Flyweight {
-    +operation(extrinsicState: ExtrinsicState): void
-  }
-  class ConcreteFlyweight {
-    +operation(extrinsicState: ExtrinsicState): void
-  }
-  class FlyweightFactory {
-    -flyweights: Map<string, Flyweight>
-    +getFlyweight(key: string): Flyweight
-  }
-  class ExtrinsicState {}
-
-  ConcreteFlyweight --|> Flyweight
-  FlyweightFactory --> Flyweight
-  FlyweightFactory --> ExtrinsicState
+    FlyweightFactory -- Flyweight
+    Flyweight <|-- ConcreteFlyweight
 ```
 
 ## Implementation
 ### How to use it?
-To use the Flyweight design pattern, follow these steps:
-1. Identify the objects that have a large number of instances and consume significant memory.
-2. Separate the intrinsic and extrinsic state of these objects.
-3. Create a flyweight interface or base class that defines the shared operations.
-4. Implement concrete flyweight classes that represent the intrinsic state and implement the shared operations.
-5. Create a flyweight factory class that manages the flyweight objects and provides a way to retrieve them.
-6. Use the flyweight objects by passing the extrinsic state as a parameter to the shared operations.
+To use the Flyweight pattern, you need to divide the target class into intrinsic and extrinsic states. Intrinsic state is stored in the Flyweight class, while extrinsic state is stored or computed by client objects.
 
 ### Python code examples:
 ```python
+class TreeType:
+    def __init__(self, name, color):
+        self.name = name
+        self.color = color
 
-class Flyweight:
-    def operation(self, extrinsic_state):
-        pass
-
-
-class ConcreteFlyweight(Flyweight):
-    def operation(self, extrinsic_state):
-        # Perform operation using intrinsic state and extrinsic state
-        pass
-
-
-class FlyweightFactory:
-    def __init__(self):
-        self.flyweights = {}
-
-    def getFlyweight(self, key):
-        if key not in self.flyweights:
-            self.flyweights[key] = ConcreteFlyweight()
-        return self.flyweights[key]
-
-
-# Usage
-factory = FlyweightFactory()
-flyweight = factory.getFlyweight('key')
-flyweight.operation('extrinsic state')
-
+class TreeFactory:
+    treeTypes = {}
+    @classmethod
+    def getTreeType(cls, name, color):
+        if name not in cls.treeTypes:
+            cls.treeTypes[name] = TreeType(name, color)
+        return cls.treeTypes[name]
 ```
-
-- The Python code example demonstrates the implementation of the Flyweight pattern. It defines a flyweight interface, concrete flyweight class, and flyweight factory class. The flyweight objects are created and retrieved using the factory class, and the shared operations are performed using the extrinsic state.   
+The code defines a TreeType class (Flyweight) and a TreeFactory class (Flyweight Factory). The TreeFactory creates a new TreeType only if it doesn't exist, otherwise it returns the existing one.   
 
 
 ## Analysis
-### Cleaner Code?
+### Maintainability: 
+To what extent is your code characterized by cleanliness and readability?
+#### Cleaner Code?
+The Flyweight pattern helps in making clean code by reducing the clutter of a large number of objects. It promotes data sharing instead of storing separate objects for each data.
 
-- Separates the intrinsic and extrinsic state of objects, improving code organization and reducing complexity.
-- Reuses flyweight objects instead of creating new ones, making the code more efficient and avoiding unnecessary memory allocation.
-- Centralizes the creation and management of flyweight objects in a flyweight factory class, making the code easier to maintain and understand.
+#### Readable Code?
+The Flyweight pattern makes code more readable by separating intrinsic and extrinsic states, making it clear what data is shared and what data is client-specific.
 
-### Readable Code?
 
-- Improves code readability by separating shared operations from the unique state of each object.
-- Uses descriptive names for flyweight objects and their operations, making the code self-explanatory and easier to understand.
-- Provides a clear and consistent way to retrieve flyweight objects through the flyweight factory class, enhancing code readability.
+### Testability: 
+Can your code be methodically and comprehensively tested?
 
-### Replaceable code?
 
-- Promotes loose coupling by separating the intrinsic and extrinsic state of objects.
-- Reduces dependencies on specific implementations by having flyweight objects depend only on shared operations.
-- The flyweight factory class acts as a mediator between client code and flyweight objects, further decoupling the two.
+### Adaptability: 
+How readily can your code be substituted or modified?
+#### Replaceable code?
+The Flyweight pattern makes code more replaceable by decoupling the state (intrinsic and extrinsic) from the object structure. This allows you to change the state without affecting the Flyweight object.
 
-### Testable code?
 
-- Makes code easier to test by decoupling shared operations from the extrinsic state.
-- Passes the extrinsic state as a parameter to shared operations, allowing for different input values in test cases.
-- Enables better isolation of code under test by using flyweight objects, as shared operations can be tested independently from the extrinsic state.
+### Scalability:
+Are your architectural components characterized by loose coupling?
 
-### Advantages?
 
-- Reduces memory usage by sharing common data among objects
-- Improves performance by reusing flyweight objects
-- Simplifies code and makes it easier to understand and maintain
-- Allows for the creation of a large number of objects without excessive memory consumption
+### Tradeoffs:
+#### Advantages?
 
-### Disadvantages?
+- Reduces the number of objects, saving memory
+- Improves performance by sharing data
+- Solves the problem of handling large numbers of objects that share a lot of common state
 
-- Introduces additional complexity, especially in managing shared state and ensuring thread safety
-- Limited applicability to objects with a large number of instances and significant memory consumption
-- May introduce overhead due to state management and object sharing
+#### Disadvantages?
+
+- Increases complexity by introducing more classes
+- Extrinsic state might be hard to manage
+- Not beneficial if the overhead of sharing is high compared to the memory saved
 
 
 ## Remarks
 ### Concerns and Tips?
 
-- Thread safety and avoiding data corruption when multiple threads access shared flyweight objects
-- Potential impact on object identity as multiple objects may share the same intrinsic state
-- Performance trade-offs between memory usage reduction and overhead from state management and object sharing
-- Tips for using the Flyweight pattern effectively and judiciously
+- The Flyweight pattern increases complexity by introducing more classes.
+- Be careful when managing the extrinsic state as it's not shared and needs to be provided by the client whenever an operation is performed.
+- Use the Flyweight pattern when there are many similar objects and memory is a concern.
+- Study the usage of Flyweight pattern in Java's String Pool and how browsers use it for rendering optimizations.
 
 
 ### Execrises
 
-- Q: What is the purpose of the Flyweight design pattern?
-
-  - A: The purpose of the Flyweight design pattern is to minimize memory usage by sharing as much data as possible between multiple objects.
-- Q: How does the Flyweight pattern help in making code clean?
-
-  - A: The Flyweight pattern helps in making clean code by separating the intrinsic and extrinsic state of objects, improving code organization and reducing complexity.
-- Q: What are the advantages of using the Flyweight pattern?
-
-  - A: The advantages of using the Flyweight pattern include reduced memory usage, improved performance, simplified code, and scalability.
-- Q: What are the disadvantages of using the Flyweight pattern?
-
-  - A: The disadvantages of using the Flyweight pattern include increased complexity, limited applicability, and potential impact on performance.
-- Q: How does the Flyweight pattern promote loose coupling?
-
-  - A: The Flyweight pattern promotes loose coupling by separating the intrinsic and extrinsic state of objects and reducing dependencies on specific implementations.
-- Q: How can the Flyweight pattern be tested?
-
-  - A: The Flyweight pattern can be tested by creating test cases with different input values for the extrinsic state and verifying the behavior of the shared operations.
-- Q: What are some concerns when using the Flyweight pattern?
-
-  - A: Some concerns when using the Flyweight pattern include thread safety, object identity, and performance trade-offs.
-- Q: Can you give an example of a real product that uses the Flyweight pattern?
-
-  - A: One example is a text editor that uses the Flyweight pattern to represent characters in a document, sharing character objects among multiple positions to reduce memory usage.
+- Q: What is the Flyweight pattern used for? 
+  - A: It's used to minimize memory use by sharing as much data as possible with similar objects.
+- Q: What is the difference between intrinsic and extrinsic state in the Flyweight pattern? 
+  - A: Intrinsic state is shared, extrinsic state is client-specific.
 

@@ -1,6 +1,6 @@
 
 # Template Method
-> Version: dp_20231231_202019
+> Version: dp_20231231_234226
 
 - [Builder Design Pattern](#builder-design-pattern)
    * [Summary](#summary)
@@ -23,29 +23,29 @@
 ## Summary
 
 ### Essence
-The Template Method design pattern defines a common structure for an algorithm in a base class and allows subclasses to provide specific implementations for certain steps without changing the overall structure. It promotes code reuse and reduces code duplication by extracting common code into the base class. The template method acts as a high-level overview of the algorithm, while the abstract methods provide specific details that can be easily understood by reading the concrete implementations in the subclasses. This design pattern helps in making code clean, readable, and easy to test.
+The Template Method design pattern defines a common algorithm structure in a base class while allowing subclasses to customize certain steps of the algorithm. It promotes code reuse, maintainability, and scalability.
 
 ### Real examples
 
-- When you want to define a common algorithm or process that can be shared among multiple subclasses, but still allow for variation in certain steps of the algorithm.
-- When you want to avoid code duplication by extracting common code into a base class and allowing subclasses to provide specific implementations for certain steps.
-- When you want to enforce a specific structure or sequence of steps in an algorithm, while still allowing for customization of individual steps.
+- When defining a common algorithm structure with customizable steps
+- To avoid code duplication by moving common code to a base class
+- To provide a way for clients to customize the behavior of an algorithm without modifying its structure
 
 
 ```mermaid
 classDiagram
   class AbstractClass {
-    +templateMethod()
-    +abstractMethod1()
-    +abstractMethod2()
+    +templateMethod(): void
+    -abstractMethod1(): void
+    -abstractMethod2(): void
   }
   class ConcreteClass1 {
-    +abstractMethod1()
-    +abstractMethod2()
+    +abstractMethod1(): void
+    +abstractMethod2(): void
   }
   class ConcreteClass2 {
-    +abstractMethod1()
-    +abstractMethod2()
+    +abstractMethod1(): void
+    +abstractMethod2(): void
   }
   AbstractClass <|-- ConcreteClass1
   AbstractClass <|-- ConcreteClass2
@@ -55,11 +55,12 @@ classDiagram
 ### How to use it?
 To use the Template Method design pattern, follow these steps:
 1. Create an abstract base class that defines the template method and declares abstract methods for the customizable steps.
-2. Create concrete subclasses that inherit from the base class and provide implementations for the abstract methods.
-3. Use the template method in client code to execute the algorithm, relying on the concrete subclasses to provide the specific behavior for the abstract steps.
+2. Create concrete subclasses that inherit from the base class and implement the abstract methods.
+3. The template method in the base class should call the abstract methods in the appropriate order to execute the algorithm.
 
 ### Python code examples:
 ```python
+
 from abc import ABC, abstractmethod
 
 class AbstractClass(ABC):
@@ -67,7 +68,6 @@ class AbstractClass(ABC):
     def template_method(self):
         self.step1()
         self.step2()
-        self.step3()
 
     @abstractmethod
     def step1(self):
@@ -77,84 +77,105 @@ class AbstractClass(ABC):
     def step2(self):
         pass
 
-    @abstractmethod
-    def step3(self):
-        pass
 
-
-class ConcreteClass(AbstractClass):
+class ConcreteClass1(AbstractClass):
 
     def step1(self):
-        print('ConcreteClass: Step 1')
+        print('ConcreteClass1: Step 1')
 
     def step2(self):
-        print('ConcreteClass: Step 2')
+        print('ConcreteClass1: Step 2')
 
-    def step3(self):
-        print('ConcreteClass: Step 3')
+
+class ConcreteClass2(AbstractClass):
+
+    def step1(self):
+        print('ConcreteClass2: Step 1')
+
+    def step2(self):
+        print('ConcreteClass2: Step 2')
 
 
 if __name__ == '__main__':
-    concrete = ConcreteClass()
-    concrete.template_method()
+    concrete1 = ConcreteClass1()
+    concrete1.template_method()
+
+    concrete2 = ConcreteClass2()
+    concrete2.template_method()
+
 ```
-The above Python code demonstrates the Template Method design pattern. The AbstractClass defines the template method and declares abstract methods for the customizable steps. The ConcreteClass provides concrete implementations for these steps and uses the template method to execute the algorithm.   
+
+- The Python code example demonstrates the Template Method design pattern. The AbstractClass defines the template method and declares abstract methods for the customizable steps. The ConcreteClass1 and ConcreteClass2 provide specific implementations for the steps and call the template method to execute the algorithm.   
 
 
 ## Analysis
-### Cleaner Code?
-Promotes code reuse and reduces code duplication by extracting common code into the base class.
+### Maintainability: 
+To what extent is your code characterized by cleanliness and readability?
+#### Cleaner Code?
 
-### Readable Code?
-Provides a clear and consistent structure for the algorithm, making the code more readable and easier to understand.
+- Promotes code reuse by defining a common algorithm structure in a base class
+- Reduces code duplication by separating the common algorithm from specific implementations
+- Encapsulates common behavior in a single place, making the code more modular and organized
 
-### Replaceable code?
-Separates the high-level algorithm from the specific implementations of its steps, making components loosely coupled.
+#### Readable Code?
 
-### Testable code?
-Allows for easier isolation of specific steps in the algorithm, making it easier to test each step in isolation by providing mock implementations.
+- Provides a clear structure for the algorithm, making the code more readable
+- Separates the core algorithm from specific implementation details
+- Uses meaningful method names, improving code readability and understandability
 
-### Advantages?
 
-- Promotes code reuse and reduces code duplication.
-- Provides a clear and consistent structure for the algorithm.
-- Makes code clean, readable, and easy to test.
-- Helps in making components loosely coupled.
+### Testability: 
+Can your code be methodically and comprehensively tested?
 
-### Disadvantages?
 
-- Limited flexibility compared to other design patterns.
-- Increased complexity due to the use of abstract methods and subclasses.
-- Inheritance limitations may limit the flexibility and extensibility of the codebase.
+### Adaptability: 
+How readily can your code be substituted or modified?
+#### Replaceable code?
+
+- Allows subclasses to provide different implementations for certain steps of the algorithm
+- Promotes loose coupling between the base class and its subclasses
+- Enables easy replacement or extension of behavior without affecting other parts of the code
+
+
+### Scalability:
+Are your architectural components characterized by loose coupling?
+
+
+### Tradeoffs:
+#### Advantages?
+
+- Promotes code reuse, maintainability, and scalability
+- Provides flexibility through customizable steps of the algorithm
+- Encapsulates behavior, making the code more modular and organized
+- Allows easy addition of new subclasses and accommodates future changes
+
+#### Disadvantages?
+
+- May not be suitable for highly flexible algorithms with varying steps
+- Introduces complexity with inheritance and abstract methods
+- May not provide enough flexibility for highly customized algorithms
 
 
 ## Remarks
 ### Concerns and Tips?
 
-- One concern is the potential for a large number of subclasses if there are many variations of the algorithm.
-- Another concern is the reliance on inheritance to define the structure and variations of the algorithm.
-- The use of abstract methods and subclasses can introduce additional complexity to the codebase.
-- The Template Method design pattern may not be suitable for all types of algorithms.
+- Consider the level of abstraction for the base class to balance usefulness and flexibility
+- Manage dependencies between the base class and its subclasses
+- Document and communicate the base class and its subclasses to other developers
+- Use meaningful method names, consider dependency injection, and document purpose and behavior
 
 
 ### Execrises
 
 - Q: What is the purpose of the Template Method design pattern?
 
-  - A: The purpose of the Template Method design pattern is to define a common structure for an algorithm in a base class and allow subclasses to provide specific implementations for certain steps of the algorithm without changing its structure.
-- Q: How does the Template Method design pattern promote code reuse?
+  - A: The purpose of the Template Method design pattern is to define the skeleton of an algorithm in a base class and allow subclasses to provide specific implementations for certain steps of the algorithm.
 
-  - A: The Template Method design pattern promotes code reuse by providing a common structure that can be shared among multiple subclasses. The base class defines the overall structure of the algorithm, while the concrete subclasses provide the specific implementations for each step.
-- Q: How does the Template Method design pattern help in making code clean?
+Q: How does the Template Method design pattern promote code reuse?
 
-  - A: The Template Method design pattern helps in making code clean by promoting code reuse and reducing code duplication. It provides a clear and consistent structure for the algorithm, eliminating the need for duplicate code in each subclass.
-- Q: How does the Template Method design pattern help in making code readable?
+  - A: The Template Method design pattern promotes code reuse by defining a common algorithm structure in a base class, reducing code duplication.
 
-  - A: The Template Method design pattern helps in making code readable by providing a clear and consistent structure for the algorithm. The template method acts as a high-level overview of the algorithm, while the abstract methods provide specific details that can be easily understood by reading the concrete implementations in the subclasses.
-- Q: How does the Template Method design pattern help in making code easy to be tested?
+Q: How does the Template Method design pattern help in making the code testable?
 
-  - A: The Template Method design pattern helps in making code easy to be tested by allowing for easier isolation of specific steps in the algorithm. The abstract methods represent individual steps that can be overridden in the subclasses, making it easier to test each step in isolation by providing mock implementations.
-- Q: How does the Template Method design pattern help in making components loose coupled?
-
-  - A: The Template Method design pattern helps in making components loosely coupled by separating the high-level algorithm from the specific implementations of its steps. The base class defines the overall structure of the algorithm, while the concrete subclasses provide the specific implementations. This separation allows for independent development and modification of the subclasses without affecting the overall algorithm or other subclasses.
+  - A: The Template Method design pattern helps in making the code testable by separating the core algorithm from the specific implementation details, allowing for the creation of testable units that can be tested in isolation.
 

@@ -1,6 +1,6 @@
 
 # State Design Pattern
-> Version: dp_20231231_202019
+> Version: dp_20231231_234226
 
 - [Builder Design Pattern](#builder-design-pattern)
    * [Summary](#summary)
@@ -23,18 +23,16 @@
 ## Summary
 
 ### Essence
-
-- The State design pattern allows an object to change its behavior based on its internal state.
-- It encapsulates the behavior of an object into separate state classes, each responsible for its own behavior.
-- The object delegates its behavior to the current state, promoting clean, readable, and testable code.
-- This pattern is useful when an object's behavior needs to change based on its internal state, and when there are multiple possible states and transitions between them.
+The State design pattern allows an object to alter its behavior when its internal state changes. It encapsulates the behavior of an object into separate state classes, and the object delegates its behavior to the current state. This promotes code modularity, maintainability, loose coupling, and testability. The State design pattern is useful when there are multiple possible states and transitions between them.
 
 ### Real examples
 
-- Traffic light system: Each state of the traffic light (e.g., red, yellow, green) can be represented by a separate state class.
-- Document editor: Different editing modes (e.g., insert mode, overwrite mode) can be represented by separate state classes.
-- Vending machine: Different states (e.g., idle state, selection state, dispensing state) can be represented by separate state classes.
-- The pattern is useful when an object's behavior needs to change based on its internal state, and when there are multiple possible states and transitions between them.
+- Traffic light system
+- Document editor
+- Vending machine
+- When an object's behavior needs to change based on its internal state
+- When there are multiple possible states and transitions between them
+- When the behavior of an object can be encapsulated into separate state classes
 
 
 ```mermaid
@@ -66,134 +64,171 @@ To use the State design pattern, follow these steps:
 2. Define the state interface or abstract class that declares the common methods for all concrete states.
 3. Implement concrete state classes that inherit from the state interface or abstract class.
 4. In the context class, implement methods to set the current state and delegate the behavior to the current state object.
-5. Use the context class to interact with the object and let it handle its behavior based on its internal state.
+5. Use the context class to interact with the state objects and change the behavior dynamically.
 
 ### Python code examples:
 ```python
+1. Example 1: Traffic light system
 
+```python
 from abc import ABC, abstractmethod
 
-class State(ABC):
+class TrafficLightState(ABC):
     @abstractmethod
-    def handle(self, context):
+    def handle(self):
         pass
 
 
-class ConcreteStateA(State):
-    def handle(self, context):
-        print('Handling state A')
+class RedState(TrafficLightState):
+    def handle(self):
+        print('Stop')
 
 
-class ConcreteStateB(State):
-    def handle(self, context):
-        print('Handling state B')
+class YellowState(TrafficLightState):
+    def handle(self):
+        print('Prepare to stop')
 
 
-class Context:
+class GreenState(TrafficLightState):
+    def handle(self):
+        print('Go')
+
+
+class TrafficLight:
     def __init__(self):
-        self.state = None
+        self.state = RedState()
 
     def set_state(self, state):
         self.state = state
 
     def request(self):
-        self.state.handle(self)
+        self.state.handle()
 
 
-context = Context()
-state_a = ConcreteStateA()
-state_b = ConcreteStateB()
+traffic_light = TrafficLight()
+traffic_light.request()  # Output: Stop
+traffic_light.set_state(YellowState())
+traffic_light.request()  # Output: Prepare to stop
+traffic_light.set_state(GreenState())
+traffic_light.request()  # Output: Go
+```
+2. Example 2: Document editor
 
-context.set_state(state_a)
-context.request()
+```python
+from abc import ABC, abstractmethod
 
-context.set_state(state_b)
-context.request()
+class EditingMode(ABC):
+    @abstractmethod
+    def handle(self):
+        pass
+
+
+class InsertMode(EditingMode):
+    def handle(self):
+        print('Insert text')
+
+
+class OverwriteMode(EditingMode):
+    def handle(self):
+        print('Overwrite text')
+
+
+class DocumentEditor:
+    def __init__(self):
+        self.mode = InsertMode()
+
+    def set_mode(self, mode):
+        self.mode = mode
+
+    def request(self):
+        self.mode.handle()
+
+
+document_editor = DocumentEditor()
+document_editor.request()  # Output: Insert text
+document_editor.set_mode(OverwriteMode())
+document_editor.request()  # Output: Overwrite text
 
 ```
 
-- The above Python code demonstrates the State design pattern. The State interface declares a method handle(), which is implemented by the ConcreteStateA and ConcreteStateB classes. The Context class has a reference to the current state object and delegates its behavior to the current state.   
+- 1. The State design pattern allows an object to change its behavior when its internal state changes.
+- 2. It encapsulates the behavior of an object into separate state classes.
+- 3. The behavior of the object is delegated to the current state.
+- 4. The State design pattern promotes code modularity, maintainability, loose coupling, and testability.
+- 5. It is useful when there are multiple possible states and transitions between them.   
 
 
 ## Analysis
-### Cleaner Code?
+### Maintainability: 
+To what extent is your code characterized by cleanliness and readability?
+#### Cleaner Code?
 
-- The pattern separates the behavior of an object into separate state classes, leading to cleaner and more maintainable code.
-- Each state class has a single responsibility, adhering to the single responsibility principle.
-- The pattern encapsulates related code into separate state classes, reducing code duplication.
+- Encapsulates the behavior of an object into separate state classes, leading to a more modular and maintainable codebase.
+- Reduces code duplication by implementing common behavior in the base state class or interface.
+- Promotes the Single Responsibility Principle (SRP) by separating the behavior into different state classes.
 
-### Readable Code?
+#### Readable Code?
 
-- State transitions are explicit and clear, making the code more readable.
-- Each state class represents a specific behavior or state of the object, making the code self-explanatory.
-- The pattern promotes modularity by encapsulating the behavior of an object into separate state classes, making the code easier to understand and modify.
+- Improves code readability by clearly defining the different states and their associated behavior.
+- Makes the code self-explanatory by delegating the behavior to the current state.
 
-### Replaceable code?
 
-- The pattern promotes loose coupling by using dependency inversion. The context class depends on the state interface or abstract class, rather than concrete state classes, allowing for easier substitution of different state implementations.
-- The pattern adheres to the open-closed principle, as new states can be added without modifying the existing code.
-- The pattern separates the behavior of an object into separate state classes, reducing dependencies and making the code more modular and maintainable.
+### Testability: 
+Can your code be methodically and comprehensively tested?
 
-### Testable code?
 
-- Each state class can be tested independently, allowing for more focused and targeted testing.
-- The pattern allows for easier mocking of the object's behavior in different states.
-- The pattern helps in achieving better test coverage, as each state and state transition can be tested separately.
+### Adaptability: 
+How readily can your code be substituted or modified?
+#### Replaceable code?
 
-### Advantages?
+- Promotes code replaceability by encapsulating the behavior into separate state classes.
+- Allows easy extension of behavior by adding new state classes.
 
-- The pattern provides flexibility by allowing an object to change its behavior at runtime based on its internal state.
-- The pattern promotes maintainability by encapsulating the behavior of an object into separate state classes.
-- The pattern makes the code easier to test, as each state class can be tested independently.
-- The pattern helps in solving problems related to changing an object's behavior based on its internal state, managing multiple possible states and transitions between them, and encapsulating the behavior of an object into separate state classes.
 
-### Disadvantages?
+### Scalability:
+Are your architectural components characterized by loose coupling?
 
-- The pattern introduces additional complexity due to the implementation of multiple state classes and managing the state transitions.
-- The pattern can introduce some overhead, as each state transition involves delegating the behavior to the current state object.
-- If the state transitions are not properly managed, there is a risk of the object being in an inconsistent state.
-- The pattern helps in avoiding complex conditional statements and code duplication by encapsulating the behavior of an object into separate state classes.
+
+### Tradeoffs:
+#### Advantages?
+
+- Allows easy extension of behavior
+- Promotes code modularity and maintainability
+- Promotes loose coupling and scalability
+- Improves code readability
+- Makes the code more testable
+
+#### Disadvantages?
+
+- May lead to a large number of classes
+- Can be complex to implement with complex state transitions and dependencies
+- May not be suitable for simple cases where behavior does not change based on internal state
 
 
 ## Remarks
 ### Concerns and Tips?
 
-- Concerns: The pattern can introduce additional complexity, especially when there are multiple states and state transitions. It is important to ensure that the object is always in a valid and consistent state. The pattern can introduce some overhead due to the delegation of behavior to the current state object.
-- Programming Tips: Design the state classes carefully to ensure that each state has a clear responsibility. Use dependency inversion to decouple the context class from the concrete state classes. Choose the right granularity for the states to balance flexibility and complexity. Implement proper validation and error handling. Test each state and state transition independently. Document the state transitions clearly.
-- Tricky Aspects: Managing the state transitions can be tricky. Choosing the right granularity for the states can be challenging. If there is shared state between multiple states, it can be challenging to manage and synchronize the state changes.
-- Further Studies: 'Design Patterns: Elements of Reusable Object-Oriented Software' by Erich Gamma et al., 'Head First Design Patterns' by Eric Freeman et al., 'Design Patterns in Python' by Brandon Rhodes and Dusty Phillips.
+- Concerns: Potential for a large number of classes, complex state transitions, suitability for simple cases
+- Programming tips: Use meaningful names, consider using a state machine library, document state transitions
+- Trickys: Design clear and consistent state transitions, avoid excessive dependencies
+- Further studies: 'Design Patterns: Elements of Reusable Object-Oriented Software', 'Head First Design Patterns', 'Design Patterns in Python'
 
 
 ### Execrises
 
-- 1. Q: What is the purpose of the State design pattern?
-   
+- Q: What is the purpose of the State design pattern?
+
   - A: The purpose of the State design pattern is to allow an object to alter its behavior when its internal state changes.
-- 2. Q: How does the State design pattern promote clean code?
-   
-  - A: The State design pattern promotes clean code by separating concerns, adhering to the single responsibility principle, and reducing code duplication.
-- 3. Q: How does the State design pattern help in making the code readable?
-   
-  - A: The State design pattern makes the code more readable by making state transitions explicit, self-explanatory, and modular.
-- 4. Q: How does the State design pattern help in making the code easy to be tested?
-   
-  - A: The State design pattern makes the code easier to test by allowing independent testing of each state and state transition.
-- 5. Q: How does the State design pattern help in making components loose coupled?
-   
-  - A: The State design pattern promotes loose coupling by using dependency inversion and adhering to the open-closed principle.
-- 6. Q: What are the advantages of using the State design pattern?
-   
-  - A: The advantages of using the State design pattern include flexibility, maintainability, and testability.
-- 7. Q: What are the disadvantages of using the State design pattern?
-   
-  - A: The disadvantages of using the State design pattern include increased complexity, overhead, and potential for inconsistent states.
-- 8. Q: How can the State design pattern be implemented in Python?
-   
-  - A: The State design pattern can be implemented in Python using interfaces or abstract classes for the state, and separate classes for each concrete state.
-- 9. Q: What are some common pitfalls to avoid when using the State design pattern?
-   
-  - A: Some common pitfalls to avoid include improper management of state transitions, choosing the wrong granularity for states, and handling shared state.
-- 10. Q: How can the State design pattern be tested?
-    
-  - A: The State design pattern can be tested by testing each state and state transition independently, and by mocking the behavior of the states.
+- Q: How does the State design pattern promote code modularity?
+
+  - A: The State design pattern encapsulates the behavior of an object into separate state classes, which promotes code modularity and maintainability.
+- Q: How does the State design pattern help in making the code testable?
+
+  - A: The State design pattern separates the behavior of an object into different state classes, which allows for easier testing of each state in isolation.
+- Q: What are some advantages of using the State design pattern?
+
+  - A: Some advantages of using the State design pattern include easy extension of behavior, code modularity, loose coupling, improved code readability, and better testability.
+- Q: What are some concerns with the State design pattern?
+
+  - A: Some concerns with the State design pattern include the potential for a large number of classes, complex state transitions, and the suitability for simple cases.
 
