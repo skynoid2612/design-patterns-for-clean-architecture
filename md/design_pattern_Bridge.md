@@ -1,24 +1,28 @@
 
 # Bridge Design Pattern
-> Version: dp_20231231_234226
+> Version: dp_20240101_000050
 
-- [Builder Design Pattern](#builder-design-pattern)
-   * [Summary](#summary)
-      + [Essence](#essence)
-      + [Real examples](#real-examples)
-   * [Implementation](#implementation)
-      + [How to use it?](#how-to-use-it)
-      + [Python code examples:](#python-code-examples)
-   * [Analysis](#analysis)
-      + [Cleaner Code?](#cleaner-code)
-      + [Readable Code?](#readable-code)
-      + [Replaceable code?](#replaceable-code)
-      + [Testable code?](#testable-code)
-      + [Advantages?](#advantages)
-      + [Disadvantages?](#disadvantages)
-   * [Remarks](#remarks)
-      + [Concerns and Tips?](#concerns-and-tips)
-      + [Execrises](#execrises)
+- [Bridge Design Pattern](#bridge-design-pattern)
+  * [Summary](#summary)
+    + [Essence](#essence)
+    + [Real examples](#real-examples)
+  * [Implementation](#implementation)
+    + [How to use it?](#how-to-use-it)
+    + [Python code examples:](#python-code-examples)
+  * [Analysis](#analysis)
+    + [Maintainability:](#maintainability)
+      - [Cleaner Code?](#cleaner-code)
+      - [Readable Code?](#readable-code)
+    + [Testability:](#testability)
+    + [Adaptability:](#adaptability)
+      - [Replaceable code?](#replaceable-code)
+    + [Scalability:](#scalability)
+    + [Tradeoffs:](#tradeoffs)
+      - [Advantages?](#advantages)
+      - [Disadvantages?](#disadvantages)
+  * [Remarks](#remarks)
+    + [Concerns and Tips?](#concerns-and-tips)
+    + [Execrises](#execrises)
 
 ## Summary
 
